@@ -5,7 +5,9 @@ import styles from './views/styles.js';
 
 //views
 import Login from './views/Login';
+import Welcome from './views/Welcome';
 import Main from './views/Main';
+import Second from './views/SecondPage';
 
 
 const {
@@ -47,13 +49,17 @@ var home = React.createClass({
     switch (id){
       case 'login':
           return Login;
+      case 'welcome':
+          return Welcome;
       case 'main':
           return Main;
+      case 'second':
+          return Second;
     }
   },
 
   renderScene(route, navigator) {
-    console.log('route ' + route.id);
+    console.log('route ID: ' + route.id); 
     let Component = this.getView(route.id);
     return (
         <Component

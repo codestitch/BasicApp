@@ -25,19 +25,6 @@ const loginStyles = StyleSheet.create({
 
 
 
-  col: {
-    flexDirection: 'column',
-    margin: 0,
-  },
-  row: {
-    flexDirection: 'row',
-    margin:0,
-  },
-  rowCenter: {
-    flexDirection: 'row',
-    alignSelf: 'center',
-    margin: 0,
-  },
 
   // header
   toolbar:{
@@ -91,28 +78,7 @@ const loginStyles = StyleSheet.create({
     color: '#000'
   },
 
-  // Button
-  buttonText: {
-    fontSize: 18,
-    color: 'white',
-    alignSelf: 'center'
-  },
-  button: {
-    height: 36,
-    flex: 1,
-    marginRight: 30,
-    marginLeft:30, 
-    marginTop: 25,
-    flexDirection: 'row',
-    backgroundColor: '#29D65E',
-    borderColor: '#29D65E',
-    borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 10,
-    alignSelf: 'stretch',
-    justifyContent: 'center', 
-  }, 
-
+  
   // Fb button
   linearGradient: {
     flex: 1,
