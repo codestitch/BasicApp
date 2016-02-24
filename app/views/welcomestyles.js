@@ -30,6 +30,25 @@ const welcomeStyles = StyleSheet.create({
     color: '#3e3e3e',
     textAlign: 'center',
   },
+
+   formInput: { 
+        height: 26,
+        fontSize: 13,
+        borderWidth: 1,
+        borderColor: "#555555",
+    },
+    saved: {
+        fontSize: 20,
+        textAlign: "center",
+        margin: 10,
+    },
+    instructions: {
+        textAlign: "center",
+        color: "#333333",
+        marginBottom: 5,
+        marginTop: 5,
+    },
+
 	// Button
   buttonText: {
     fontSize: 18,

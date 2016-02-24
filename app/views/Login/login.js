@@ -11,7 +11,8 @@ const {
   Text, 
   Navigator,
   View,
-  TouchableHighlight
+  TouchableHighlight,
+    AsyncStorage,
 } = React;
 
 
@@ -34,7 +35,8 @@ var Login = React.createClass({
   },
 
   componentWillMount(){
-    this.updateView();
+
+    // AsyncStorage.setItem("viewed_welcome", "false");
   },
 
   updateView(){  
@@ -42,7 +44,7 @@ var Login = React.createClass({
     FBLoginManager.getCredentials(function(error, data){ 
 
       if (!error) { 
-       _this.gotoMain();
+       _this.gotoWelcome();
       }  
 
     }); 
@@ -114,13 +116,13 @@ var Login = React.createClass({
     );
   },
 
-  gotoMain() {  
-    var navigator = this.props.navigator;
-    var _user = this.state.user;
+  gotoWelcome() {  
+    console.log('gotoWelcome');
+    var navigator = this.props.navigator;  
+    var screen = 'welcome'; 
 
     this.props.navigator.replace({
-      id: 'welcome',  
-      data: { fb: _user } 
+      id: screen
     }); 
   },
 
@@ -134,110 +136,7 @@ var Login = React.createClass({
   }
 
 });
- 
-
-
-var Photo = React.createClass({
-  propTypes: {
-    user: React.PropTypes.object.isRequired,
-  },
-
-  getInitialState(){
-    return {
-      photo: null,
-    };
-  },
-
-  componentWillMount(){
-    var _this = this;
-    var user = this.props.user;
-    var api = `https://graph.facebook.com/v2.3/${user.userId}/picture?width=${FB_PHOTO_WIDTH}&redirect=false&access_token=${user.token}`;
-
-    fetch(api)
-      .then((response) => response.json())
-      .then((responseData) => {
-        _this.setState({
-          photo : {
-            url : responseData.data.url,
-            height: responseData.data.height,
-            width: responseData.data.width,
-          },
-        });
-      })
-      .done();
-  },
-
-  render(){
-    if(this.state.photo == null) return this.renderLoading();
-    
-    var photo = this.state.photo;
-
-    return (
-      <View style={logstyles.bottomBump}>
-
-        <Image
-          style={photo &&
-            {
-              height: photo.height,
-              width: photo.width,
-            }
-          }
-          source={{uri: photo && photo.url}}
-        />
-      </View>
-    );
-  },
-  renderLoading(){
-    return (
-      <View>
-        <Text style={styles.center}>Loading...</Text>
-      </View>
-    );
-  }
-});
-
-
-var Info = React.createClass({
-  propTypes: {
-    user: React.PropTypes.object.isRequired,
-  },
-
-  getInitialState: function(){
-    return {
-      info: null,
-    };
-  },
-
-  componentWillMount: function(){
-    var _this = this;
-    var user = this.props.user;
-    var api = `https://graph.facebook.com/v2.3/${user.userId}?fields=name,email&access_token=${user.token}`;
-
-    fetch(api)
-      .then((response) => response.json())
-      .then((responseData) => {
-        _this.setState({
-          info : {
-            name : responseData.name,
-            email: responseData.email,
-          },
-        });
-      })
-      .done();
-  },
-
-  render: function(){
-    var info = this.state.info;
-
-    return (
-      <View style={logstyles.bottomBump}>
-        <Text>{ info && this.props.user.userId }</Text>
-        <Text>{ info && info.name }</Text>
-        <Text>{ info && info.email }</Text>
-      </View>
-    );
-  }
-});
+  
  
 
 // export default login;

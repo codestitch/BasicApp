@@ -1,8 +1,10 @@
 'use strict';
 
-var React = require('react-native'); 
+var React = require('react-native');  
+  
 import welcomestyles from '../welcomestyles.js'; 
 import styles from '../styles.js'; 
+import store  from 'react-native-simple-store';
 
 var {
   StyleSheet, 
@@ -10,6 +12,8 @@ var {
   View,
   TouchableHighlight,
   Text, 
+  AsyncStorage,
+  TextInput
 } = React;
 
 var FBLogin = require('react-native-facebook-login'); 
@@ -20,19 +24,33 @@ var FB_PHOTO_WIDTH = 200;
 var Welcome = React.createClass({  
 
   getInitialState(){ 
-    return {
-      user: null, 
+    return { 
     };
   },
 
   componentWillMount(){
-    console.log("componentWillMount");
-    this.showProfile();
+    console.log("Welcome componentWillMount"); 
+
+
+    AsyncStorage.getItem("viewed_welcome").then((value) => {
+
+      this.setState({"viewedWelcome": value});
+      if (value == "true") {
+        console.log("going directly to main");
+        this.gotoMain();
+      }
+      else{ 
+        this.showProfile();
+      }
+       
+
+    }).done();
+
   },
 
   componentDidMount(){
-    console.log("componentDidMount");
-    // this.showProfile(); 
+    console.log("Welcome componentDidMount"); 
+    
   },  
 
   showProfile(){
@@ -45,7 +63,7 @@ var Welcome = React.createClass({
     var data = null;  
 
     // if (this.isMounted()) {
-      FBLoginManager.getCredentials(function(error, data){ 
+      FBLoginManager.getCredentials(function(error, data){   
 
         if (!error) { 
           _this.setState({ user : data.credentials }); 
@@ -53,26 +71,21 @@ var Welcome = React.createClass({
         else {
           _this.setState({ user : null });
         }
-
-      });   
-
-      // _this.setState({ user : data }); 
-    // } 
-    // else{
-    //   console.log("not mounted");
-    // } 
+ 
+      });     
 
   },
 
   render() {    
     var self = this;
     var user = this.state.user;
-    console.log("rendering...");
-    console.log(user); 
+    console.log("welcome rendering..."); 
+
+    if (self.state.viewedWelcome == null) return self.renderLoading();
 
     return ( 
-    	<View style={welcomestyles.container}> 
-
+      <View style={welcomestyles.container}>   
+       
         { user && <Info user={user} /> } 
         { user && <Photo user={user} /> } 
 
@@ -86,6 +99,12 @@ var Welcome = React.createClass({
           <Text style={welcomestyles.buttonText}>Explore</Text>
         </TouchableHighlight>
 
+        {/*<TouchableHighlight style={welcomestyles.button}
+          onPress={this.gotoSecond}
+            underlayColor='#29D92E'>
+          <Text style={welcomestyles.buttonText}>2nd page</Text>
+        </TouchableHighlight> */}
+
       </View>
     );
   }, 
@@ -94,12 +113,35 @@ var Welcome = React.createClass({
     this.props.navigator.replace({
       id: 'login'
     }); 
+  }, 
+
+  gotoMain() {  
+    var navigator = this.props.navigator;  
+    var screen = 'main'; 
+
+    this.props.navigator.resetTo({
+      id: screen
+    }); 
   },
+
 
   gotoExplore() {
     this.props.navigator.push({
       id: 'main'
     }); 
+  },
+
+  gotoSecond() {
+    this.props.navigator.push({
+      id: 'second'
+    }); 
+  },
+  renderLoading(){
+    return (
+       <View style={welcomestyles.container}>   
+        <Text style={styles.rowCenter}></Text>
+      </View>
+    );
   }
 
 }); 
@@ -140,6 +182,7 @@ var Photo = React.createClass({
     if(this.state.photo == null) return this.renderLoading();
     
     var photo = this.state.photo;
+    AsyncStorage.setItem("profile_photo", photo.url); 
 
     return (
       <View style={styles.rowCenter}>
@@ -196,7 +239,10 @@ var Info = React.createClass({
   },
 
   render: function(){
+     if(this.state.info == null) return this.renderLoading();
+
     var info = this.state.info;
+    AsyncStorage.setItem("profile_name", info.name); 
 
     return (
       <View style={styles.center}>
@@ -209,6 +255,13 @@ var Info = React.createClass({
         {/*  <Text>{ info && this.props.user.userId }</Text>*/}
     
        {/*  <Text>{ info && info.email }</Text>*/}
+      </View>
+    );
+  },
+  renderLoading(){
+    return (
+      <View>
+        <Text style={styles.rowCenter}></Text>
       </View>
     );
   }

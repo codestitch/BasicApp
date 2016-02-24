@@ -1,6 +1,7 @@
 'use strict';
 
 var React = require('react-native'); 
+
 import mainstyles from '../mainstyles.js'; 
 import styles from '../styles.js'; 
 import Tabbar, { Tab, RawContent, IconWithBar, glypyMapMaker } from 'react-native-tabbar';
@@ -23,7 +24,9 @@ var {
   TouchableHighlight,
   TouchableOpacity,
   ScrollView,
-  Component
+  Component,
+  AsyncStorage,
+  TextInput
 } = React;
 
 var FBLogin = require('react-native-facebook-login');  
@@ -31,30 +34,39 @@ var FBLogin = require('react-native-facebook-login');
 
 var Main = React.createClass({  
   getInitialState(){ 
-    return {
-      toggle : false
+    return { 
     };
   }, 
-  render() {
-    return (
-      <Navigator
-          renderScene={this.renderScene}
-          navigator={this.props.navigator}
-          navigationBar={
-            <Navigator.NavigationBar style={{backgroundColor: '#007966'}}
-                routeMapper={NavigationBarRouteMapper} />
-          } />
-    );
+
+  componentWillMount(){ 
+    console.log("Main componentWillMount"); 
+
+    AsyncStorage.getItem("profile_name").then((value) => {
+        this.setState({"profileName": value});
+    }).done();
   },
-  renderScene(route, navigator) {
-    var self = this;
+
+  componentDidMount(){
+    console.log("Main componentDidMount"); 
+
+    AsyncStorage.setItem("viewed_welcome", "true");
+    AsyncStorage.setItem("is_loggedin", "true");
+  },   
+
+  render() { 
+      var self = this; 
+    if(this.state.profileName == null) return this.renderLoading();
+    // console.log("display2: "+display2);
     return (  
         <Tabbar ref="myTabbar" barColor={'#007966'}>
         <Tab name="home">
           <IconWithBar label="Tour" type={glypy.Home} from={'icomoon'}/>
           <RawContent>
             <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent:'center' }}>
-              <Text> Hotels / Resorts </Text>
+             
+                <Text >
+                    Hey {this.state.profileName} Check out the Hotels / Resorts 
+                </Text>
             </View>
           </RawContent>
         </Tab>
@@ -86,19 +98,37 @@ var Main = React.createClass({
             <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent:'center' }}> 
                <FBLogin style={{ alignItems: 'center', justifyContent: 'center',}} 
                   onLogout={function(){
-                    console.log("FBLoginMock logged out.");
-                    // _this.setState({ user : null });
+                    console.log("FBLoginMock logged out.");   
+                    AsyncStorage.setItem("is_loggedin", "false");
+                    self.logout();
                   }} 
                 /> 
             </View>
           </RawContent>
         </Tab>
       </Tabbar> 
-    );
+    ); 
+  },
+  renderScene(route, navigator) {
+    
   },
   gotoPersonPage() {
      
+  },
+
+  logout() {
+    this.props.navigator.replace({
+      id: 'login'
+    }); 
+  },
+  renderLoading(){
+    return (
+      <View>
+        <Text style={styles.rowCenter}></Text>
+      </View>
+    );
   }
+
 }); 
 
 

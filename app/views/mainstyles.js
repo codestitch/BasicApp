@@ -42,6 +42,10 @@ const mainStyles = StyleSheet.create({
     justifyContent: 'center', 
   }, 
 
+  top:{
+    marginTop:120,
+  }
+
 });
 
 
