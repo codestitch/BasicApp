@@ -28,13 +28,13 @@ const mainStyles = StyleSheet.create({
     alignSelf: 'center'
   },
   button: {
-    height: 36, 
+    height: 25, 
     marginRight: 30,
     marginLeft:30, 
     marginTop: 25,
     flexDirection: 'row',
-    backgroundColor: '#29D65E',
-    borderColor: '#29D65E',
+    backgroundColor: 'red',
+    borderColor: 'red',
     borderWidth: 1,
     borderRadius: 8,
     marginBottom: 10,

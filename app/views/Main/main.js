@@ -26,7 +26,7 @@ var {
   ScrollView,
   Component,
   AsyncStorage,
-  TextInput
+  Alert
 } = React;
 
 var FBLogin = require('react-native-facebook-login');  
@@ -49,8 +49,7 @@ var Main = React.createClass({
   componentDidMount(){
     console.log("Main componentDidMount"); 
 
-    AsyncStorage.setItem("viewed_welcome", "true");
-    AsyncStorage.setItem("is_loggedin", "true");
+    AsyncStorage.setItem("viewed_welcome", "true"); 
   },   
 
   render() { 
@@ -98,11 +97,15 @@ var Main = React.createClass({
             <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent:'center' }}> 
                <FBLogin style={{ alignItems: 'center', justifyContent: 'center',}} 
                   onLogout={function(){
-                    console.log("FBLoginMock logged out.");   
-                    AsyncStorage.setItem("is_loggedin", "false");
+                    console.log("FBLoginMock logged out.");    
                     self.logout();
                   }} 
                 /> 
+                 <TouchableHighlight style={mainstyles.button}
+                  onPress={this.clearStorage}
+                    underlayColor='red'>
+                  <Text style={mainstyles.buttonText}>Clear Welcome Storage</Text>
+                </TouchableHighlight>
             </View>
           </RawContent>
         </Tab>
@@ -112,7 +115,15 @@ var Main = React.createClass({
   renderScene(route, navigator) {
     
   },
-  gotoPersonPage() {
+  clearStorage() {
+    Alert.alert(
+    'Alert Title',
+    'Are you sure you want to clear Welcome message?',
+    [ 
+      {text: 'Cancel', onPress: () => console.log('Cancel Clear storate'), style: 'cancel'},
+      {text: 'OK', onPress: () => AsyncStorage.setItem("viewed_welcome", "false") },
+    ]
+  )
      
   },
 
