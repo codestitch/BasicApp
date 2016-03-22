@@ -1,150 +1,130 @@
 'use strict';
 
-var React = require('react-native');  
-  
-import welcomestyles from '../welcomestyles.js'; 
-import styles from '../styles.js'; 
-import store  from 'react-native-simple-store';
+import React from 'react-native';
+
+import welcomestyles from '../welcomestyles.js';
+import styles from '../styles.js';
 
 var {
-  StyleSheet, 
+  StyleSheet,
   Image,
   View,
   TouchableHighlight,
-  Text, 
+  Text,
   AsyncStorage,
-  TextInput
+  Platform,
 } = React;
 
-var FBLogin = require('react-native-facebook-login'); 
+var FBLogin = require('react-native-facebook-login');
 var FBLoginManager = require('NativeModules').FBLoginManager;
 
-var FB_PHOTO_WIDTH = 200; 
+var FB_PHOTO_WIDTH = 200;
 
-var Welcome = React.createClass({  
 
-  getInitialState(){ 
-    return { 
+var itypeof = function (val) {
+    return Object.prototype.toString.call(val).replace(/(\[|object|\s|\])/g, '').toLowerCase();
+};
+
+var Welcome = React.createClass({
+
+  getInitialState(){
+    return {
     };
   },
 
   componentWillMount(){
-    console.log("Welcome componentWillMount"); 
-
+    console.log("Welcome componentWillMount");
 
     AsyncStorage.getItem("viewed_welcome").then((value) => {
-
       this.setState({"viewedWelcome": value});
+
       if (value == "true") {
         console.log("going directly to main");
         this.gotoMain();
       }
-      else{ 
+      else{
         this.showProfile();
       }
-       
-
     }).done();
+    // this.showProfile();
 
   },
-
-  componentDidMount(){
-    console.log("Welcome componentDidMount"); 
-    
-  },  
 
   showProfile(){
-    // var passdata = this.props.route.data.fb; 
+    // var passdata = this.props.route.data.fb;
     // console.log(passdata);
-    // this.setState({ user: passdata}); 
+    // this.setState({ user: passdata});
 
     // Check if component is mounted
-    var _this = this;
-    var data = null;  
+    var self = this;
+    var data = null;
 
-    // if (this.isMounted()) {
-      FBLoginManager.getCredentials(function(error, data){   
+    if (Platform.OS === 'ios')
+    {
+      FBLoginManager.getCredentials(function(error, data){
 
-        if (!error) { 
-          _this.setState({ user : data.credentials }); 
-        } 
-        else {
-          _this.setState({ user : null });
+        if (!error) {
+          self.setState({ user : data.credentials });
         }
- 
-      });     
+        else {
+          self.setState({ user : null });
+        }
+
+      });
+    }
+    else
+    {
+      FBLoginManager.getCurrentToken(function(token){
+        if(itypeof(token) === 'string' && token.length > 0){
+          console.log(token);
+        }else{
+          console.log("failed");
+        }
+      })
+    }
 
   },
 
-  render() {    
+  render() {
     var self = this;
     var user = this.state.user;
-    console.log("welcome rendering..."); 
+    console.log("welcome rendering...");
 
-    if (self.state.viewedWelcome == null) return self.renderLoading();
+    return (
+      <View style={welcomestyles.container}>
 
-    return ( 
-      <View style={welcomestyles.container}>   
-       
-        { user && <Info user={user} /> } 
-        { user && <Photo user={user} /> } 
+        { user && <Info user={user} /> }
+        { user && <Photo user={user} /> }
 
         <View style={welcomestyles.welcomebar}>
           <Text style={welcomestyles.welcometext}> Welcome to Bohol </Text>
         </View>
- 
+
         <TouchableHighlight style={welcomestyles.button}
-          onPress={this.gotoExplore}
+          onPress={this.gotoMain}
             underlayColor='#29D92E'>
           <Text style={welcomestyles.buttonText}>Explore</Text>
         </TouchableHighlight>
 
-        {/*<TouchableHighlight style={welcomestyles.button}
-          onPress={this.gotoSecond}
-            underlayColor='#29D92E'>
-          <Text style={welcomestyles.buttonText}>2nd page</Text>
-        </TouchableHighlight> */}
-
       </View>
     );
-  }, 
+  },
 
-  logout() {
-    this.props.navigator.replace({
-      id: 'login'
-    }); 
-  }, 
-
-  gotoMain() {  
-    var navigator = this.props.navigator;  
-    var screen = 'main'; 
-
+  gotoMain() {
     this.props.navigator.resetTo({
-      id: screen
-    }); 
-  },
-
-
-  gotoExplore() {
-    this.props.navigator.push({
       id: 'main'
-    }); 
+    });
   },
 
-  gotoSecond() {
-    this.props.navigator.push({
-      id: 'second'
-    }); 
-  },
   renderLoading(){
     return (
-       <View style={welcomestyles.container}>   
+       <View style={welcomestyles.container}>
         <Text style={styles.rowCenter}></Text>
       </View>
     );
   }
 
-}); 
+});
 
 
 
@@ -180,9 +160,9 @@ var Photo = React.createClass({
 
   render(){
     if(this.state.photo == null) return this.renderLoading();
-    
+
     var photo = this.state.photo;
-    AsyncStorage.setItem("profile_photo", photo.url); 
+    // AsyncStorage.setItem("profile_photo", photo.url);
 
     return (
       <View style={styles.rowCenter}>
@@ -192,6 +172,7 @@ var Photo = React.createClass({
             {
               height: photo.height - 70,
               width: photo.width - 70,
+              borderRadius: 65,
             }
           }
           source={{uri: photo && photo.url}}
@@ -242,18 +223,16 @@ var Info = React.createClass({
      if(this.state.info == null) return this.renderLoading();
 
     var info = this.state.info;
-    AsyncStorage.setItem("profile_name", info.name); 
+    // AsyncStorage.setItem("profile_name", info.name);
 
     return (
       <View style={styles.center}>
-
-
         <View style={welcomestyles.titlebar}>
           <Text style={welcomestyles.title}>Hi, { info && info.name }</Text>
         </View>
 
         {/*  <Text>{ info && this.props.user.userId }</Text>*/}
-    
+
        {/*  <Text>{ info && info.email }</Text>*/}
       </View>
     );

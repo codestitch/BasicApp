@@ -7,7 +7,12 @@ import styles from './views/styles.js';
 import Login from './views/Login';
 import Welcome from './views/Welcome';
 import Main from './views/Main';
-import Second from './views/SecondPage';
+import Tour from './views/Tour';
+import Tour_Details from './views/Tour/Details';
+import News from './views/News';
+import News_Details from './views/News/Details';
+import Events from './views/Events';
+import Events_Details from './views/Events/Details';
 
 
 const {
@@ -53,13 +58,23 @@ var home = React.createClass({
           return Welcome;
       case 'main':
           return Main;
-      case 'second':
-          return Second;
+      case 'tour':
+          return Tour;
+      case 'tourdetails':
+          return Tour_Details;
+      case 'news':
+          return News;
+      case 'newsdetails':
+          return News_Details;
+      case 'events':
+          return Events;
+      case 'eventsdetails':
+          return Events_Details;
     }
   },
 
   renderScene(route, navigator) {
-    console.log('route ID: ' + route.id); 
+    console.log('route ID: ' + route.id);
     let Component = this.getView(route.id);
     return (
         <Component

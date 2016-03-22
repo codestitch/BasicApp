@@ -1,10 +1,14 @@
 'use strict';
 
-var React = require('react-native'); 
+var React = require('react-native');
 
-import mainstyles from '../mainstyles.js'; 
-import styles from '../styles.js'; 
+import mainstyles from '../mainstyles.js';
+import styles from '../styles.js';
 import Tabbar, { Tab, RawContent, IconWithBar, glypyMapMaker } from 'react-native-tabbar';
+
+import Tour from '../Tour';
+import News from '../News';
+import Events from '../Events';
 
 const glypy = glypyMapMaker({
   Home: 'e900',
@@ -15,11 +19,11 @@ const glypy = glypyMapMaker({
 });
 
 var {
-  StyleSheet, 
+  StyleSheet,
   Image,
   View,
   TouchableHighlight,
-  Text, 
+  Text,
   Navigator,
   TouchableHighlight,
   TouchableOpacity,
@@ -29,17 +33,17 @@ var {
   Alert
 } = React;
 
-var FBLogin = require('react-native-facebook-login');  
- 
+var FBLogin = require('react-native-facebook-login');
 
-var Main = React.createClass({  
-  getInitialState(){ 
-    return { 
+
+var Main = React.createClass({
+  getInitialState(){
+    return {
     };
-  }, 
+  },
 
-  componentWillMount(){ 
-    console.log("Main componentWillMount"); 
+  componentWillMount(){
+    console.log("Main componentWillMount");
 
     AsyncStorage.getItem("profile_name").then((value) => {
         this.setState({"profileName": value});
@@ -47,42 +51,33 @@ var Main = React.createClass({
   },
 
   componentDidMount(){
-    console.log("Main componentDidMount"); 
+    console.log("Main componentDidMount");
 
-    AsyncStorage.setItem("viewed_welcome", "true"); 
-  },   
+    AsyncStorage.setItem("viewed_welcome", "true");
+  },
 
-  render() { 
-      var self = this; 
+  render() {
+      var self = this;
     if(this.state.profileName == null) return this.renderLoading();
     // console.log("display2: "+display2);
-    return (  
+    return (
         <Tabbar ref="myTabbar" barColor={'#007966'}>
         <Tab name="home">
           <IconWithBar label="Tour" type={glypy.Home} from={'icomoon'}/>
           <RawContent>
-            <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent:'center' }}>
-             
-                <Text >
-                    Hey {this.state.profileName} Check out the Hotels / Resorts 
-                </Text>
-            </View>
+             <Tour navigator={this.props.navigator}/>
           </RawContent>
         </Tab>
         <Tab name="camera">
           <IconWithBar label="News" type={glypy.Camera} from={'icomoon'}/>
           <RawContent>
-            <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent:'center' }}>
-              <Text onPress={()=>console.log('camera')}>News</Text>
-            </View>
+             <News navigator={this.props.navigator}/>
           </RawContent>
         </Tab>
         <Tab name="stats">
           <IconWithBar label="Events" type={glypy.Stat} from={'icomoon'}/>
           <RawContent>
-            <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent:'center' }}>
-              <Text onPress={()=>console.log('stats')}>Events</Text>
-            </View>
+             <Events navigator={this.props.navigator}/>
           </RawContent>
         </Tab>
         <Tab name="favorite">
@@ -94,13 +89,13 @@ var Main = React.createClass({
         <Tab name="settings">
           <IconWithBar label="Settings" type={glypy.Settings} from={'icomoon'}/>
           <RawContent>
-            <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent:'center' }}> 
-               <FBLogin style={{ alignItems: 'center', justifyContent: 'center',}} 
+            <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent:'center' }}>
+               <FBLogin style={{ alignItems: 'center', justifyContent: 'center',}}
                   onLogout={function(){
-                    console.log("FBLoginMock logged out.");    
+                    console.log("FBLoginMock logged out.");
                     self.logout();
-                  }} 
-                /> 
+                  }}
+                />
                  <TouchableHighlight style={mainstyles.button}
                   onPress={this.clearStorage}
                     underlayColor='red'>
@@ -109,28 +104,28 @@ var Main = React.createClass({
             </View>
           </RawContent>
         </Tab>
-      </Tabbar> 
-    ); 
+      </Tabbar>
+    );
   },
   renderScene(route, navigator) {
-    
+
   },
   clearStorage() {
     Alert.alert(
     'Alert Title',
     'Are you sure you want to clear Welcome message?',
-    [ 
+    [
       {text: 'Cancel', onPress: () => console.log('Cancel Clear storate'), style: 'cancel'},
       {text: 'OK', onPress: () => AsyncStorage.setItem("viewed_welcome", "false") },
     ]
   )
-     
+
   },
 
   logout() {
     this.props.navigator.replace({
       id: 'login'
-    }); 
+    });
   },
   renderLoading(){
     return (
@@ -140,7 +135,7 @@ var Main = React.createClass({
     );
   }
 
-}); 
+});
 
 
 var NavigationBarRouteMapper = {
@@ -168,7 +163,7 @@ var NavigationBarRouteMapper = {
   }
 };
 
- 
+
 class MyLongScrollView extends Component {
   constructor(props, context) {
     super(props, context);

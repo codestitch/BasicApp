@@ -6,10 +6,10 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  */
-#import <FBSDKCoreKit/FBSDKCoreKit.h>
-#import <FBSDKLoginKit/FBSDKLoginKit.h>
 
 #import "AppDelegate.h"
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
 
 #import "RCTRootView.h"
 
@@ -48,22 +48,15 @@
                                                initialProperties:nil
                                                    launchOptions:launchOptions];
 
-//  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-//  UIViewController *rootViewController = [UIViewController new];
-//  rootViewController.view = rootView;
-//  self.window.rootViewController = rootViewController;
-//  [self.window makeKeyAndVisible];
-//  return YES;
-  
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-  UIViewController *rootViewController = [[UIViewController alloc] init];
+  UIViewController *rootViewController = [UIViewController new];
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
-  // return YES;
+//  return YES;
+  
   return [[FBSDKApplicationDelegate sharedInstance] application:application
                                   didFinishLaunchingWithOptions:launchOptions];
-  
 }
 
 // Facebook SDK
@@ -77,6 +70,5 @@
                                               sourceApplication:sourceApplication
                                                      annotation:annotation];
 }
-
 
 @end
